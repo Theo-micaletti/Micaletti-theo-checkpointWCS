@@ -1,28 +1,39 @@
 import React from 'react';
 import { useQuery } from '@apollo/client';
-import { Link } from 'react-router-dom';
 import { GET_COUNTRIES } from '../graphql/queries';
+import { Link, useParams } from "react-router-dom";
 
-interface ICountries {
+export interface ICountry {
     code: string;
     name: string;
+    emoji: string;
 }
 
 function Countries() {
-    const { data } = useQuery(GET_COUNTRIES);
+    const { continentCode} = useParams();
 
-    const countries = data.countries;
+    const { loading, error, data } = useQuery(GET_COUNTRIES, {
+        variables: { continentCode }
+    });
+    if (loading) {
+        return <div>Loading...</div>;
+    }
+    if (error) {
+        return <div>Error</div>;
+    }
+    const { countries } = data.continent;
 
     return (
         <div>
-            <h1>Countries</h1>
-            <ul>
-                {countries.map((country: ICountries) => (
-                    <li key={country.code}>
-                        <Link to={`/countries/${country.code}`}>{country.name}</Link>
-                    </li>
+            <div className='grid grid-cols-4 mx-auto text-center'>
+                {countries.map((country: ICountry) => (
+                    <div className='p-2 m-2 border cursor-pointer hover:border-red-300 text-xl' key={country.code}>
+                        <Link to={`/countries/${country.code}`}>
+                            {country.name} {country.emoji}
+                        </Link>
+                    </div>
                 ))}
-            </ul>
+            </div>
         </div>
     );
 }

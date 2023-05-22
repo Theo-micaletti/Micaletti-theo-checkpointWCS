@@ -10,11 +10,24 @@ export const GET_CONTINENTS = gql`
 `;
 
 export const GET_COUNTRIES = gql`
-  query {
-    countries {
-      code
-      name
+  query GetCountriesByContinent($continentCode: ID!) {
+    continent(code: $continentCode) {
+      countries {
+        code
+        name
+        emoji
+      }
     }
   }
 `;
 
+export const GET_COUNTRY = gql`
+  query ($countryCode: ID!) {
+    country(code: $countryCode) {
+      name
+      emoji
+      currency
+      capital
+    }
+  }
+`;
